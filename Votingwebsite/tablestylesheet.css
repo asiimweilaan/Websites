@@ -1,0 +1,12 @@
+table th,td{
+    border: black solid 1px;
+    border-collapse: collapse;
+}
+table{
+    border-collapse: collapse;
+    width: 45rem;
+    text-align: center;
+    margin: auto;
+    color: black;
+    background:linear-gradient(rgba(138, 189, 255, 0.8),rgba(255, 255, 255, 0.8));
+}
