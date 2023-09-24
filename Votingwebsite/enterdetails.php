@@ -1,5 +1,12 @@
 <?php
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
     
+    require 'phpmailer/src/Exception.php';
+    require 'phpmailer/src/PHPMailer.php';
+    require 'phpmailer/src/SMTP.php';
+
+
     include 'connection.php';
 
     $email = $_POST["email"];
@@ -10,7 +17,7 @@
     $checksql = "SELECT * from `student` WHERE stemail='$email'";
 
 
-    if(!empty($email) && !empty($password)){
+    if(!empty($email) && !empty($password) && preg_match("[@students.cavendish.ac.ug]",$email)){
 
         $sqlcheck = mysqli_query($status,$checksql);
         
@@ -25,10 +32,29 @@
         else{
             $sql = mysqli_query($status,$insertsql);
             
+            $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            // $mail->SMTPDebug = 1;
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = $email;
+            $mail->Password = '87654321';
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port = "465";
+
+            $mail->setFrom($email);
+            $mail->addAddress($email);
+            $mail->isHTML(true);
+            $mail->Subject = "success signup";
+            $mail->Body = "Thank you for signing up to Cavendish University Voting Platform. You can now login
+            to start voting by clicking on this link
+            http://localhost/Votingwebsite/login.php
+            ";
+            $mail->send();
             if($sql){ // checking if both email and password are valid
                 echo "
                 <script>
-                    alert('successfully signed up! You can now login to start voting');
+                    alert('successfully signed up! You can check your email for confirmation');
                 </script>
                 ";
                 ?>
@@ -256,7 +282,8 @@
                             background: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.8));
                             color: #ff0000;
                             "
-                                > Failed to Sign Up. Please fill in both email and password fields and try again
+                                > Failed to Sign Up. Please fill in both email and password fields and try again. The email entered
+                                must be a Cavendish University Email
                             </h4>
                         </div>
                     </div>
